@@ -22,6 +22,8 @@
       <item>
         <ruleref uri="#thisobject"/>
       </item>
+      <item>de cette couleur<tag>out="thiscolor";</tag>
+      </item>
     </one-of>
     <ruleref special="GARBAGE" />
   </rule>
