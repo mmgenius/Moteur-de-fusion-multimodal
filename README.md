@@ -5,6 +5,15 @@ sont :
  la reconnaissance de parole,
  le pointage sur la palette de dessin.
 
+# Git Workflow
+Tout sur master.
+
+# Fonctionnement
+
+Il faut lancer les .bat "sra.bat", "reco.bat", "palette.bat" et le fusionneur.
+
+# Commandes implémentés
+
 # Grammaire
 La grammaire de la reconnaissance de parole inclut les commandes suivantes:
  
