@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="dll/ivy.jar"/>
+	<classpathentry kind="lib" path="Palette/ivy.jar"/>
+	<classpathentry kind="lib" path="Palette/palette.jar"/>
+	<classpathentry kind="lib" path="RecoGeste/ivy.jar"/>
+	<classpathentry kind="lib" path="RecoGeste/onedollar.jar"/>
+	<classpathentry kind="lib" path="Visionneur/ivy-java-1.2.8rc1.jar"/>
+	<classpathentry kind="lib" path="Visionneur/visionneur1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
