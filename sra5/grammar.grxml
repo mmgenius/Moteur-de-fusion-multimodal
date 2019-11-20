@@ -13,26 +13,48 @@
    <rule id="answer" scope="public"> 
     <ruleref special="GARBAGE" /> 
     <one-of>
-      <item><ruleref uri="#yes"/>
-          <tag>out="yes";</tag></item>
-      <item><ruleref uri="#no"/>
-      <tag>out="no";</tag></item>
+      <item><ruleref uri="#here"/>
+          <tag>out="here";</tag>
+      </item>
+      <item>
+        <ruleref uri="#colours"/>
+      </item>
+      <item>
+        <ruleref uri="#thisobject"/>
+      </item>
     </one-of>
     <ruleref special="GARBAGE" />
   </rule>
        
-   <rule id="yes">
+   <rule id="here">
     <one-of>
-      <item>affirmatif</item>
-      <item>tout à fait</item>
-      <item>oui</item>
+      <item>ici</item>
+      <item>lÃ </item>
+      <item>Ã  cette position</item>
+    </one-of> 
+  </rule>
+  <rule id="thisobject">
+    <one-of>
+      <item>cet objet
+        <tag>out="thisobject";</tag>
+      </item>
+      <item>ce rectangle
+        <tag>out="thisrectangle";</tag>
+      </item>
+      <item>cette ellipse
+        <tag>out="thisellipse";</tag>
+      </item>
+    </one-of> 
+  </rule>
+  <rule id="colours">
+    <one-of>
+      <item>rouge<tag>out="red";</tag></item>
+      <item>vert<tag>out="green";</tag></item>
+      <item>noir<tag>out="black";</tag></item>
+      <item>blanc<tag>out="white";</tag></item>
+      <item>gris<tag>out="gray";</tag></item>
+      <item>jaune<tag>out="yellow";</tag></item>
+      <item>bleu<tag>out="blue";</tag></item>
     </one-of> 
   </rule> 
-  <rule id="no">
-    <one-of>
-      <item>négatif</item>
-      <item>non</item>
-      <item>pas question</item>
-    </one-of>
-  </rule>
 </grammar>
