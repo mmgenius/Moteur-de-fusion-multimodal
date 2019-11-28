@@ -24,4 +24,4 @@ les mots "ici", "là" et "à cette position" provoquent un message "here"
 Les couleurs rouge vert noir gris blanc bleu et jaune sont reconnus et provoquent l'envoi des messages correspondants en anglais (red green black gray white blue et yellow)
 
 ## Designation de l'objet
-Les commandes "cette ellipse" "ce rectangle" et "cet objet" sont reconnus et envoient les messages thisellipse, thisrectangle et thisobject. La commande "de cette couleur" envoie "this color".
+Les commandes "cette ellipse" "ce rectangle" et "cet objet" sont reconnus et envoient les messages thisellipse, thisrectangle et thisobject. La commande "de cette couleur" envoie "thisscolor".
