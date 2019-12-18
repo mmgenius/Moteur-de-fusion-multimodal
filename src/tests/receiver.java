@@ -15,11 +15,11 @@ public class receiver {
 			
 			@Override
 			public void receive(IvyClient client, String[] args) {
-				System.out.println("ta gueule");
+				System.out.println("heard "+args[0]);
 			}
 		};
 		try {
-			I.bindMsg("OneDollar Reco=Move*", listener );
+			I.bindMsg("OneDollar Reco=(.*)", listener );
 			System.out.println("I listen to ");
 		} catch (IvyException e) {
 			// TODO Auto-generated catch block

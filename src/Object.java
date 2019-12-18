@@ -6,6 +6,9 @@ public class Object {
 		this.colour = colour;
 		this.type = type;
 	}
+	public Object(String type) {
+		this.type = type;
+	}
 	public int getPosX() {
 		return posX;
 	}

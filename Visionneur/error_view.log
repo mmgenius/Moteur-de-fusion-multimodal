@@ -1,0 +1,12 @@
+Exception in thread "Thread-5" java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70)
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:248)
+	at java.base/java.util.Objects.checkIndex(Objects.java:372)
+	at java.base/java.util.ArrayList.get(ArrayList.java:458)
+	at java.desktop/javax.swing.JTabbedPane.removeTabAt(JTabbedPane.java:988)
+	at java.desktop/javax.swing.JTabbedPane.remove(JTabbedPane.java:1033)
+	at fr.irit.diamant.ivy.viewer.Visionneur.disconnect(Visionneur.java:190)
+	at fr.dgac.ivy.Ivy.clientDisconnects(Ivy.java:532)
+	at fr.dgac.ivy.IvyClient.run(IvyClient.java:352)
+	at java.base/java.lang.Thread.run(Thread.java:834)
