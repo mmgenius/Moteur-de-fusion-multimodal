@@ -1,13 +1,22 @@
 
-public class Object {
-	public Object(int x, int y, String colour, String type) {
+public class FusionObject {
+	public FusionObject(int x, int y, String colour, String type) {
 		this.posX = x;
 		this.posY = y;
 		this.colour = colour;
 		this.type = type;
 	}
-	public Object(String type) {
+	public FusionObject(String type) {
+		this();
 		this.type = type;
+		
+	}
+	public FusionObject() {
+		//define default props in case stuff is not set.
+		this.posX = 0;
+		this.posY = 0;
+		this.colour = "white";
+		
 	}
 	public int getPosX() {
 		return posX;

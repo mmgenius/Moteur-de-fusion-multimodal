@@ -9,7 +9,7 @@ import java.util.TimerTask;
 public class CreateObject {
 	static int timeOut = 3;
 	static String state = "wm";
-	static Object obj = null;
+	static FusionObject obj = null;
 	//temporary position
 	static int x=0;
 	static int y=0;
@@ -29,32 +29,22 @@ public class CreateObject {
 				System.out.println("message was: "+message);
 				//gesture message
 				switch (state) {
-				case "wm":
-					switch (message) {
-					case "Ellipse":
-						state = "CR/CE";
-						obj = new Object(message);
-						t1.schedule(new TimerTask() {
-					        int n = 0;
-					        @Override
-					        public void run() {
-					            if (++n == timeOut) {
-					                t1.cancel();
-					                t1timeout();
-					            }
-					        }
-					    },1000,1000);
+					case "wm":
+							state = "CR/CE";
+							obj = new FusionObject(message);
+							t1.schedule(new TimerTask() {
+						        int n = 0;
+						        @Override
+						        public void run() {
+						            if (++n == timeOut) {
+						                t1.cancel();
+						                t1timeout();
+						            }
+						        }
+						    },1000,1000);
+							break;
+					default: 
 						break;
-					case "Triangle":
-						state = "CR/CE";
-						obj = new Object(message);
-						break;
-
-					default:
-						break;
-					}
-				default: 
-					break;
 				}
 			}
 		};
@@ -82,6 +72,8 @@ public class CreateObject {
 					        }
 					    },1000,1000);
 						break;
+					default: 
+						break;
 					}
 					
 				}
@@ -106,8 +98,42 @@ public class CreateObject {
 					}
 				
 				}
-				if(args[0].equalsIgnoreCase("here")) {
-					
+				if(args[0].equalsIgnoreCase("thiscolour")) {
+					switch(state) {
+					case "CR/CE":
+						state = "WC";
+						t1.cancel();
+						t1.schedule(new TimerTask() {
+					        int n = 0;
+					        @Override
+					        public void run() {
+					            if (++n == timeOut) {
+					                t1.cancel();
+					                t1timeout();
+					            }
+					        }
+					    },1000,1000);
+						break;
+					case "C":
+						state = "WGO";
+						try {
+							I.sendMsg("Palette:TesterPointx="+x+"y="+y);
+						} catch (IvyException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						t1.cancel();
+						t1.schedule(new TimerTask() {
+					        int n = 0;
+					        @Override
+					        public void run() {
+					            if (++n == timeOut) {
+					                t1.cancel();
+					                t1timeout();
+					            }
+					        }
+					    },1000,1000);
+					}
 				}
 			}
 				
@@ -116,15 +142,97 @@ public class CreateObject {
 			
 			@Override
 			public void receive(IvyClient client, String[] args) {
-				int x = Integer.parseInt(args[0]);
-				int y = Integer.parseInt(args[1]);
-				System.out.println("felt a click at " +x+","+y);	
+				switch(state) {
+				case "CR/CE":
+					state = "C";
+					x = Integer.parseInt(args[0]);
+					y = Integer.parseInt(args[1]);
+					System.out.println("felt a click at " +x+","+y);
+					t1.cancel();
+					t1.schedule(new TimerTask() {
+				        int n = 0;
+				        @Override
+				        public void run() {
+				            if (++n == timeOut) {
+				                t1.cancel();
+				                t1timeout();
+				            }
+				        }
+				    },1000,1000);
+					break;	
+				case "WC":
+					
+				}
 			}
 		};
+		IvyMessageListener objectidlistener = new IvyMessageListener() {
+			
+			@Override
+			public void receive(IvyClient client, String[] args) {
+				String id = args[2];
+				System.out.println("it s the id of object "+id);
+				switch(state) {
+				case "WGO":
+					state = "WGC";
+					//smpGCO    send msg “palette get colour of object <name>
+					try {
+						I.sendMsg("Palette:DemanderInfo nom="+id);
+						System.out.println("message for information retrieval sent.");
+					} catch (IvyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					t1.cancel();
+					t1.schedule(new TimerTask() {
+				        int n = 0;
+				        @Override
+				        public void run() {
+				            if (++n == timeOut) {
+				                t1.cancel();
+				                t1timeout();
+				            }
+				        }
+				    },1000,1000);
+				default: 
+					break;
+				}
+			}
+		};
+		IvyMessageListener infolistener = new IvyMessageListener() {
+			@Override
+			public void receive(IvyClient client, String[] args) {
+				//arg0: nom, arg1: x, arg2: y, arg3: longeuer, arg4: hauteur, arg5: couleurFond, arg6: couleurContour
+				// TODO Auto-generated method stub
+				switch(state) {
+				case "WGC":
+					state = "CR/CE";
+					//sCO:        enregistrer la couleur dans l’objet créé
+					System.out.println("saving colour "+args[5] +" to object");
+					obj.colour = args[5];
+					t1.cancel();
+					t1.schedule(new TimerTask() {
+				        int n = 0;
+				        @Override
+				        public void run() {
+				            if (++n == timeOut) {
+				                t1.cancel();
+				                t1timeout();
+				            }
+				        }
+				    },1000,1000);
+				default: 
+					break;
+				}
+				
+			}
+		};
+		
 		try {
 			I.bindMsg("OneDollar Reco=(.*)", gesturelistener );
 			I.bindMsg("sra5 Parsed=(.[a-z]*) ", speechlistener);
-			I.bindMsg("Palette:MouseClicked x=(.[0123456789]*) y=(.[a-z0123456789=]*)", clicklistener);
+			I.bindMsg("Palette:MouseClicked x=(.[0123456789]*) y=(.[0123456789]*)", clicklistener);
+			I.bindMsg("Palette:ResultatTesterPoint x=(.[0123456789]*) y=(.[0123456789]*) nom=(.*)", objectidlistener);
+			I.bindMsg("Palette:Info nom=(.[a-zA-Z0123456789]*) x=(.[0123456789]*) y=(.[0123456789]*) longueur=(.[0123456789]*) hauteur=(.[0123456789]*) couleurFond=(.[a-z]*) couleurContour=(.[a-z]*)", infolistener);
 			System.out.println("Listening... ");
 		} catch (IvyException e) {
 			// TODO Auto-generated catch block
@@ -139,7 +247,24 @@ public class CreateObject {
 
 	}
 	private static void t1timeout() {
-		System.out.println("no object will be created. u suck");
+		if(state!="WM") {
+			state = "WM";
+			t1.cancel();
+			//create current object:
+			try {
+				if(obj.type.equals("Ellipse")) {
+					I.sendMsg("Palette:CreerEllipse x="+obj.getPosX()+" y="+obj.getPosY()+" couleurFond="+obj.getColour());
+				}
+				if(obj.type.equals("Rectangle")) {
+					I.sendMsg("Palette:CreerRectangle x="+obj.getPosX()+" y="+obj.getPosY()+" couleurFond="+obj.getColour());
+				}
+			} catch (IvyException e1){
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		else
+			System.out.println("no object will be created.");
 		
 	}
 }
