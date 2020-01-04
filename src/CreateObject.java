@@ -13,7 +13,7 @@ public class CreateObject {
 	//temporary position
 	static int x=0;
 	static int y=0;
-	final static Timer t1 = new Timer();
+	static Timer t1;
 	static boolean timeout = false;
 	static Ivy I = new Ivy("MoteurFusion", "MoteurFusion en ligne", null);
 	
@@ -30,8 +30,11 @@ public class CreateObject {
 				//gesture message
 				switch (state) {
 					case "wm":
+						if(message.equals("Ellipse") || message.equals("Rectangle")) {
 							state = "CR/CE";
+							System.out.println("create new object... ");
 							obj = new FusionObject(message);
+							t1 = new Timer();
 							t1.schedule(new TimerTask() {
 						        int n = 0;
 						        @Override
@@ -42,6 +45,7 @@ public class CreateObject {
 						            }
 						        }
 						    },1000,1000);
+						}
 							break;
 					default: 
 						break;
@@ -61,6 +65,7 @@ public class CreateObject {
 						obj.setColour(args[0]);
 						state = "CR/CE";
 						t1.cancel();
+						t1 = new Timer();
 						t1.schedule(new TimerTask() {
 					        int n = 0;
 					        @Override
@@ -80,10 +85,12 @@ public class CreateObject {
 				if(args[0].equalsIgnoreCase("here")) {
 					switch(state) {
 					case "C":
+						System.out.println("Setting temp position....");
 						state = "CR/CE";
 						obj.setPosX(x);
 						obj.setPosY(y);
 						t1.cancel();
+						t1 = new Timer();
 						t1.schedule(new TimerTask() {
 					        int n = 0;
 					        @Override
@@ -98,11 +105,14 @@ public class CreateObject {
 					}
 				
 				}
-				if(args[0].equalsIgnoreCase("thiscolour")) {
+				if(args[0].equalsIgnoreCase("thiscolor")) {
+					System.out.println("entendu de cette couleur, etat egal: "+state);
 					switch(state) {
 					case "CR/CE":
 						state = "WC";
+						System.out.println("now waiting for click");
 						t1.cancel();
+						t1 = new Timer();
 						t1.schedule(new TimerTask() {
 					        int n = 0;
 					        @Override
@@ -116,13 +126,15 @@ public class CreateObject {
 						break;
 					case "C":
 						state = "WGO";
+						System.out.println("now waiting for palette to return object....");
 						try {
-							I.sendMsg("Palette:TesterPointx="+x+"y="+y);
+							I.sendMsg("Palette:TesterPoint x="+x+" y="+y);
 						} catch (IvyException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						t1.cancel();
+						t1 = new Timer();
 						t1.schedule(new TimerTask() {
 					        int n = 0;
 					        @Override
@@ -149,6 +161,7 @@ public class CreateObject {
 					y = Integer.parseInt(args[1]);
 					System.out.println("felt a click at " +x+","+y);
 					t1.cancel();
+					t1 = new Timer();
 					t1.schedule(new TimerTask() {
 				        int n = 0;
 				        @Override
@@ -161,7 +174,30 @@ public class CreateObject {
 				    },1000,1000);
 					break;	
 				case "WC":
-					
+					state = "WGO";
+					x = Integer.parseInt(args[0]);
+					y = Integer.parseInt(args[1]);
+					System.out.println("WC felt a click at " +x+","+y+" checking point...");	
+					System.out.println("now waiting for palette to return object....");
+					try {
+						I.sendMsg("Palette:TesterPoint x="+x+" y="+y);
+					} catch (IvyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					t1.cancel();
+					t1 = new Timer();
+					t1.schedule(new TimerTask() {
+				        int n = 0;
+				        @Override
+				        public void run() {
+				            if (++n == timeOut) {
+				                t1.cancel();
+				                t1timeout();
+				            }
+				        }
+				    },1000,1000);
+					break;					
 				}
 			}
 		};
@@ -183,6 +219,7 @@ public class CreateObject {
 						e.printStackTrace();
 					}
 					t1.cancel();
+					t1 = new Timer();
 					t1.schedule(new TimerTask() {
 				        int n = 0;
 				        @Override
@@ -210,6 +247,7 @@ public class CreateObject {
 					System.out.println("saving colour "+args[5] +" to object");
 					obj.colour = args[5];
 					t1.cancel();
+					t1 = new Timer();
 					t1.schedule(new TimerTask() {
 				        int n = 0;
 				        @Override
@@ -247,15 +285,18 @@ public class CreateObject {
 
 	}
 	private static void t1timeout() {
-		if(state!="WM") {
-			state = "WM";
+		System.out.println("TIME OUT!");
+		if(state!="wm") {
+			state = "wm";
 			t1.cancel();
 			//create current object:
 			try {
 				if(obj.type.equals("Ellipse")) {
+					System.out.println("Creating Ellipse");
 					I.sendMsg("Palette:CreerEllipse x="+obj.getPosX()+" y="+obj.getPosY()+" couleurFond="+obj.getColour());
 				}
 				if(obj.type.equals("Rectangle")) {
+					System.out.println("Creating Rectangle");
 					I.sendMsg("Palette:CreerRectangle x="+obj.getPosX()+" y="+obj.getPosY()+" couleurFond="+obj.getColour());
 				}
 			} catch (IvyException e1){
